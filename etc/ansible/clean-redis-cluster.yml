@@ -1,0 +1,12 @@
+- hosts:
+  - redis-cluster
+  tasks:
+  - name: kill redis
+    shell: "pkill redis"
+  - name: 清理目录和文件
+    file: name={{ item }} state=absent
+    with_items:
+    - "/etc/redis-cluster/"
+    - "/var/log/redis/"
+    - "/etc/redis/"
+    - "/var/redis/"

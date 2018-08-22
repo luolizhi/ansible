@@ -1,0 +1,23 @@
+- name: 准备安装目录
+  file: name={{ item }} state=directory
+  with_items:
+  - "{{ FASTDIR }}"
+  - "/data/fastdfs/tracker/"
+  - "/data/fastdfs/storage/"
+
+- name: 安装依赖gcc,git,openssl-devel,pcre-devel,gd-devel,zlib-devel
+  yum: name=gcc,git,openssl-devel,pcre-devel,gd-devel,zlib-devel  state=present
+
+- name: 复制fastdfs-5.11，libfastcommon
+  copy: src={{ item }}  dest={{ FASTDIR }}{{ item }}  mode=0644
+  with_items:
+  - "{{ FASTDFS }}{{ GZ }}"
+  - "{{ LIBFASTCOMMON }}{{ GZ }}"
+  - "{{ NGINX }}{{ GZ }}"
+  - "{{ FASTNGINX }}{{ ZIP }}"
+
+- name: 安装libfastcommon
+  shell: "cd {{ FASTDIR }} && tar -zxvf {{ LIBFASTCOMMON }}{{ GZ }} && cd {{ LIBFASTCOMMON }} &&  ./make.sh && ./make.sh install"
+
+- name: 安装fastdfs
+  shell: "cd {{ FASTDIR }} && tar -zxvf {{ FASTDFS }}{{ GZ }} && cd {{ FASTDFS }} &&  ./make.sh && ./make.sh install  && cp conf/http.conf  /etc/fdfs/  && cp conf/mime.types  /etc/fdfs/"  

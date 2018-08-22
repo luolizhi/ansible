@@ -1,0 +1,18 @@
+- hosts:
+  - fastdfs-tracker
+  - fastdfs-storage
+  tasks:
+  - name: pkill fdfs
+    shell: "pkill fdfs "
+    ignore_errors: true
+  - name: pkill nginx
+    shell: "pkill nginx"
+    ignore_errors: true
+  - name: 清理目录和文件
+    file: name={{ item }} state=absent
+    with_items:
+    - "/etc/fdfs/"
+    - "/usr/local/fastdfs/"
+    - "/usr/local/nginx/"
+    - "/data/fastdfs/"
+   

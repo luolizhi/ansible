@@ -1,0 +1,11 @@
+FDFS_TRACKER_PATH: "/data/fastdfs/tracker/"
+
+ETCFDFS: "/etc/fdfs/"
+
+FASTDIR: "/usr/local/fastdfs/"
+
+GROUP1_IP1: "192.168.77.210"
+GROUP1_IP2: "192.168.77.211"
+
+GROUP2_IP1: "192.168.77.212"
+GROUP2_IP2: "192.168.77.213"

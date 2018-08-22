@@ -1,0 +1,10 @@
+port {{ slave_port }}
+cluster-enabled yes
+cluster-config-file /etc/redis-cluster/node-{{ slave_port }}.conf
+cluster-node-timeout 15000
+daemonize yes                           
+pidfile /var/run/redis_{{ slave_port }}.pid                         
+dir  /etc/redis/{{ slave_port }}
+logfile /var/log/redis/{{ slave_port }}.log
+bind {{ ansible_default_ipv4.address }}      
+appendonly yes

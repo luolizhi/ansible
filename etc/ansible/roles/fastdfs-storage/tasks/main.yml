@@ -1,0 +1,46 @@
+- name: storage 配置
+  template: src=storage.conf.sample.group1.j2  dest={{ ETCFDFS }}storage.conf
+  when: ansible_default_ipv4.address == "192.168.77.210" or  ansible_default_ipv4.address ==  "192.168.77.211"
+- name: storage 配置
+  template: src=storage.conf.sample.group2.j2  dest={{ ETCFDFS }}storage.conf
+  when: ansible_default_ipv4.address == "192.168.77.212" or  ansible_default_ipv4.address ==  "192.168.77.213"
+
+- name: 创建软链接
+  file: src=/usr/bin/fdfs_storaged dest=/usr/local/bin/fdfs_storaged  state=link
+
+- name: 启动服务
+  shell: systemctl  daemon-reload  && systemctl restart fdfs_storaged
+  #service: name=fdfs_storaged state=started enabled=yes
+- name: 查看监听
+  shell: "netstat -nltp"
+
+- name: 解压fast-nginx-modle,复制头文件
+  shell: "cd {{ FASTDIR }} && unzip fastdfs-nginx-module-master.zip   && tar -xf nginx-1.14.0.tar.gz && cp /usr/include/fastcommon/* /usr/include/" 
+
+- name: 复制mod_fastdfs
+  template: src=mod_fastdfs.conf.group1.j2 dest={{ ETCFDFS }}mod_fastdfs.conf
+  when: ansible_default_ipv4.address == "192.168.77.210" or  ansible_default_ipv4.address ==  "192.168.77.211"
+- name: 复制mod_fastdfs
+  template: src=mod_fastdfs.conf.group2.j2 dest={{ ETCFDFS }}mod_fastdfs.conf
+  when: ansible_default_ipv4.address == "192.168.77.212" or  ansible_default_ipv4.address ==  "192.168.77.213"
+
+
+- name: 编译nginx
+  shell: "cd /usr/local/fastdfs/nginx-1.14.0  && ./configure --add-module=../fastdfs-nginx-module-master/src/  && make  && make install"
+
+- name: 修改配置文件group1
+  shell: sed -i 'N;42a  location ~ /group1/M00{\n   root /data/fastdfs/storage;\n     ngx_fastdfs_module;\n        }'  /usr/local/nginx/conf/nginx.conf
+  when: ansible_default_ipv4.address == "192.168.77.210" or  ansible_default_ipv4.address ==  "192.168.77.211"
+
+- name: 修改配置文件group2
+  shell: sed -i 'N;42a  location ~ /group2/M00{\n   root /data/fastdfs/storage;\n     ngx_fastdfs_module;\n        }'  /usr/local/nginx/conf/nginx.conf
+  when: ansible_default_ipv4.address == "192.168.77.212" or  ansible_default_ipv4.address ==  "192.168.77.213"
+
+- name: 启动nginx
+  shell: "/usr/local/nginx/sbin/nginx  && netstat -nltp" 
+
+- name: 修改client.conf配置文件,用于在客户端测试上传下载
+  template: src=client.conf.sample.j2  dest={{ ETCFDFS }}client.conf
+
+- name: 查看集群信息
+  shell: /usr/bin/fdfs_moniter /etc/fdfs/client.conf

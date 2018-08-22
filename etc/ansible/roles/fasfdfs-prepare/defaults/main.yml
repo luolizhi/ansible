@@ -1,0 +1,12 @@
+# 安装包版本
+
+
+GZ: ".tar.gz"
+ZIP: ".zip"
+FASTDFS: "fastdfs-5.11"
+LIBFASTCOMMON: "libfastcommon-1.0.38"
+FASTNGINX: "fastdfs-nginx-module-master"
+NGINX: "nginx-1.14.0"
+
+FASTDIR: "/usr/local/fastdfs/"
+ETCFDFS: "/etc/fdfs/"

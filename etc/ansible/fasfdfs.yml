@@ -1,0 +1,15 @@
+- hosts:
+  - fastdfs-tracker
+  - fastdfs-storage 
+  roles:
+  - fastdfs-prepare
+
+- hosts:
+  - fastdfs-tracker
+  roles:
+  - fastdfs-tracker
+
+- hosts:
+  - fastdfs-storage 
+  roles:
+  - fastdfs-storage

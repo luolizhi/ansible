@@ -1,0 +1,24 @@
+- name: tracker 配置
+  template: src=tracker.conf.sample.j2  dest={{ ETCFDFS }}tracker.conf
+- name: 创建软链接
+  file: src=/usr/bin/fdfs_trackerd dest=/usr/local/bin/fdfs_trackerd  state=link
+
+- name: 启动服务
+  shell: systemctl  daemon-reload  && systemctl restart fdfs_trackerd
+  #service: name=fdfs_trackerd state=started enabled=yes
+- name: 查看监听
+  shell: "ps aux|grep fdfs"
+
+- name: nginx 安装
+  shell: "cd {{ FASTDIR }} && tar -xf nginx-1.14.0.tar.gz && cd nginx-1.14.0/  && ./configure  && make && make install "
+
+- name: 修改配置文件
+  shell: "sed -i 'N;80ainclude /usr/local/nginx/conf.d/*.conf;' /usr/local/nginx/conf/nginx.conf"
+- name: 新建配置文件夹
+  file: name={{ item }} state=directory
+  with_items:
+  - "/usr/local/nginx/conf.d"
+- name: nginx配置文件
+  template: src=tracker_nginx.conf.j2 dest=/usr/local/nginx/conf.d/tracker_nginx.conf
+- name: 启动nginx
+  shell: "/usr/local/nginx/sbin/nginx  && netstat -nltp"

@@ -1,0 +1,33 @@
+upstream fdfs_group1{
+	server {{ GROUP1_IP1 }} weight=1 max_fails=2 fail_timeout=30s;
+	server {{ GROUP1_IP2 }} weight=1 max_fails=2 fail_timeout=30s;
+}
+
+upstream fdfs_group2{
+	server {{ GROUP2_IP1 }} weight=1 max_fails=2 fail_timeout=30s;
+	server {{ GROUP2_IP2 }} weight=1 max_fails=2 fail_timeout=30s;
+}
+
+server {
+    listen 80 ;
+    server_name {{ ansible_default_ipv4.address }};
+    
+    #root /data/fastdfs/storage;
+
+    location /group1/M00 {
+     	proxy_pass http://fdfs_group1;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Real-PORT $remote_port;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host:$server_port;
+    }
+
+
+     location /group2/M00 {
+     	proxy_pass http://fdfs_group2;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Real-PORT $remote_port;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host:$server_port;
+    }
+}

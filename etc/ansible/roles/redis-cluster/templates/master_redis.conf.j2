@@ -1,0 +1,10 @@
+port {{ master_port }}
+cluster-enabled yes
+cluster-config-file /etc/redis-cluster/node-{{ master_port }}.conf
+cluster-node-timeout 15000
+daemonize yes                           
+pidfile /var/run/redis_{{ master_port }}.pid                         
+dir  /etc/redis/{{ master_port }}
+logfile /var/log/redis/{{ master_port }}.log
+bind {{ ansible_default_ipv4.address }}      
+appendonly yes

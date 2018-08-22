@@ -1,0 +1,22 @@
+- name: 创建master和slave目录
+  file: name={{ item }} state=directory
+  with_items:
+  - /var/log/redis/
+  - /etc/redis-cluster/
+  - /etc/redis/{{ master_port }}/
+  - /etc/redis/{{ slave_port }}/
+  #- /etc/redis/
+- name: 拷贝配置文件
+  template: src=master_redis.conf.j2  dest=/etc/redis/{{ master_port }}/redis.conf
+- name: 拷贝配置文件
+  template: src=slave_redis.conf.j2  dest=/etc/redis/{{ slave_port }}/redis.conf
+
+- name: 复制redis-server
+  copy: src={{ item }}  dest=/etc/redis/{{ item }}  mode=0755
+  with_items:
+  - redis-server
+- name: 执行master启动命令
+  shell: "cd /etc/redis/{{ master_port }}/ && ../redis-server ./redis.conf  & "
+- name: 执行slave启动命令
+  shell: "cd /etc/redis/{{ slave_port }}/ && ../redis-server ./redis.conf  & "
+
