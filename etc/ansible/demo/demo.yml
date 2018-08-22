@@ -1,0 +1,19 @@
+# 判断一个路径是存在，且是一个目录
+- stat: path=/path/to/something
+  register: reg
+- debug: msg="Path exists and is a directory"
+ when: reg.stat.isdir is defined and p.stat.isdir
+
+# 判断文件属主是否发生改变
+- stat: path=/etc/foo.conf
+  register: reg
+- fail: msg="Oh,file ownership has changed"
+  when: re.stat.pw_name != "root"
+
+# 判断文件是否存
+- stat: path=/path/to/something
+  register: reg
+- debug: msg="file doesn't exist"
+  when: not reg.stat.exists
+- debug: msg="file is exist"
+  when: reg.stat.exists
