@@ -1,0 +1,6 @@
+- name: test debug
+  - set_fact: group="group1"
+  when: ansible_default_ipv4.address == "192.168.77.110"
+  - set_fact: group="group2"
+  when: ansible_default_ipv4.address == "192.168.77.112"
+  - debug: msg = {{ group }}
